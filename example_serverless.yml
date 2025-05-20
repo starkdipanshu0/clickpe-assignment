@@ -1,0 +1,77 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: organisation_name
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: app_name
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: service_name
+
+
+custom:
+  wsgi:
+    app: app.app
+  pythonRequirements:
+    dockerizePip: true
+    layer: true
+    slim: true
+    zip: true
+    stripPackages:
+      - pip
+      - setuptools
+      - wheel
+provider:
+  name: aws
+  runtime: python3.12
+  region: ap-south-1
+  
+  environment:
+    POSTGRES_USER: ""
+    POSTGRES_PASSWORD: ""
+    POSTGRES_DB: ""
+    POSTGRES_HOST: ""
+    POSTGRES_PORT: ""
+    SECRET_KEY: ""
+    GOOGLE_CLIENT_ID: ""
+    GOOGLE_CLIENT_SECRET: ""
+    GITHUB_CLIENT_ID: ""
+    GITHUB_CLIENT_SECRET: ""
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "arn:aws:logs:ap-south-1:${aws:accountId}:log-group:/aws/lambda/user-profile*:*"
+
+functions:
+  api:
+    handler: wsgi_handler.handler
+    layers:
+      
+      
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{proxy+}
+          method: ANY
+
+
+
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+
+package:
+  exclude:
+    - .venv/**
+    - .serverless/**
+    - node_modules/**
+    - .gitignore
+    - .git/**
+    - __pycache__/**
+    - .DS_Store
+    - README.md
+  individually: true
