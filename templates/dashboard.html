@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | ClickPe{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="main-content">
+        <h1>Welcome, {{ user.name or 'User' }}!</h1>
+
+        <div class="user-details">
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            {% if user.phone %}
+                <p><strong>Phone:</strong> {{ user.phone }}</p>
+            {% endif %}
+            {% if user.created_at %}
+                <p><strong>Joined On:</strong> {{ user.created_at.strftime('%B %d, %Y') }}</p>
+            {% endif %}
+        </div>
+
+        <a href="{{ url_for('logout') }}" class="btn btn-logout">Logout</a>
+    </div>
+</div>
+{% endblock %}

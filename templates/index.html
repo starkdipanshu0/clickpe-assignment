@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}ClickPe Assignment{% endblock %}
+
+{% block content %}
+    
+   <form id="auth-form" action="{{ url_for('login') }}" method="POST">
+    <input type="text" name="email" placeholder="Enter your email" required>
+    <input type="password" name="password" placeholder="Enter your password" required>
+
+    <input type="button" value="Login" class="btn btn-login" onclick="setActionForm('login')">
+    <input type="button" value="Register" class="btn btn-login" onclick="setActionForm('register')">
+    <div class="social-login">
+        <input type="button" value="Login with Google" class="btn btn-google" onclick="window.location.href='{{ url_for('login_google') }}'">
+        <input type="button" value="Login with GitHub" class="btn btn-github"
+            onclick="window.location.href='{{ url_for('login_github') }}'">
+
+    </div>
+    
+</form>
+
+<script>
+    function setActionForm(action) {
+        const form = document.getElementById('auth-form');
+        if (action === "login") {
+            form.action = "{{ url_for('login') }}";
+        } else if (action === "register") {
+            form.action = "{{ url_for('register') }}";
+        }
+        form.method = "POST";
+        form.submit();
+    }
+</script>
+{% endblock %}

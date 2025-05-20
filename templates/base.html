@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}ClickPe Assignment{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <!-- Basic Navbar -->
+    <nav style="background-color: #f2f2f2; padding: 1rem;">
+        <div style="font-size: 1.5rem; font-weight: bold;">ClickPe Assignment</div>
+        
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container" style="padding: 2rem;">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
+ 
