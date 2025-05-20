@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config.db import db
 from config.config import Config
 from authlib.integrations.flask_client import OAuth
-
+from datetime import datetime, timezone
 app = Flask(__name__)
 
 
@@ -62,8 +62,11 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
         user = User.query.filter_by(email=email).first()
+
         #if user and check_password_hash(user.password_hash, password):
-        if user and user.password_hash == password:
+        if user and user.check_password(password):
+            user.last_login = datetime.now(timezone.utc)  # Update last_login
+            db.session.commit()  # Save changes to the database
             session['email'] = email
             return redirect(url_for('dashboard'))
         else:
@@ -82,6 +85,7 @@ def register():
             
             new_user = User(email=email)
             new_user.set_password(password)
+            new_user.last_login = datetime.now(timezone.utc) 
             db.session.add(new_user)
             db.session.commit()
             session['email'] = email
@@ -123,14 +127,18 @@ def authorize_google():
     name = user_info['name']
     provider = 'google'
     avatar_url = user_info['picture']
+    last_login = datetime.now(timezone.utc) 
     
     # Check if the user already exists
     user = User.query.filter_by(email=email).first()
 
     if not user:
         # Create a new user
-        user = User(email=email, name=name, avatar_url=avatar_url, provider=provider)
+        user = User(email=email, name=name, avatar_url=avatar_url, provider=provider, last_login=last_login)
         db.session.add(user)
+        db.session.commit()
+    else:
+        user.last_login = last_login  # Update last_login
         db.session.commit()
     
     session['email'] = email
@@ -161,11 +169,12 @@ def authorize_github():
     name = profile.get('name') or profile.get('login')
     avatar_url = profile.get('avatar_url')
     provider = 'github'
+    last_login = datetime.now(timezone.utc)
 
     # Check or create user
     user = User.query.filter_by(email=email).first()
     if not user:
-        user = User(email=email, name=name, avatar_url=avatar_url, provider=provider)
+        user = User(email=email, name=name, avatar_url=avatar_url, provider=provider, last_login=last_login)
         db.session.add(user)
         db.session.commit()
 
