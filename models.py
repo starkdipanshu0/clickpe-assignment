@@ -14,13 +14,15 @@ class User(db.Model):
     last_login = db.Column(db.DateTime )
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        #self.password_hash = generate_password_hash(password)
+        self.password_hash = password
         
         
     
     def check_password(self, password):
-           return check_password_hash(self.password_hash, password)
-     #   return check_password_hash(self.password_hash, password)
+           #return check_password_hash(self.password_hash, password)
+              return self.password_hash == password
+      
     def __repr__(self):
         
         return f"<User {self.email} from {self.provider}>"
